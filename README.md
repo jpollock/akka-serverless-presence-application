@@ -516,4 +516,18 @@ We have three separate services as part of our application. This makes testing a
 5. Configure your Kakfa broker per the [documentation](https://developer.lightbend.com/docs/akka-serverless/projects/message-brokers.html#_confluent_cloud. **Do not pick the Python client, since the actual Kafka integration is running in the Akka Serverless proxy.**
 6. Per the same documentation, create the `users` and `heartbeats` topics in Confluent Cloud.
 7. In the same terminal window, run the command `deploy.sh`.
-8. In the same terminal window, run the command `akkasls services proxy presence-heartbeats-java --grpcui`. You can use this to explore the API running in the cloud without [exposing](https://developer.lightbend.com/docs/akka-serverless/akkasls/akkasls_services_expose.html) over the internet (although the above deploy script does that as well).
+8. Make some API calls!
+
+    # send a heartbeat (java service)
+    curl -XPUT -H "Content-Type: application/json" "https://$(akkasls services get presence-heartbeats-java -o json | jq -r '.contourroutes[0].spec.host')/users/myuser/devices/mydevice/heartbeat" -d '{"is_online": true, "profile": {"attr1": "test", "attr2": "test"}}'
+
+    # get the user's state (scala service, updated via Kafka events)
+    curl -XGET "https://$(akkasls services get presence-user-state-scala -o json | jq -r '.contourroutes[0].spec.host')/users/myuser/devices/mydevice"
+
+    # query the list of users (python service, updated via Kafka events)
+    curl -XGET "https://$(akkasls services get presence-querying-python -o json | jq -r '.contourroutes[0].spec.host')/users"
+
+## Conclusion
+Hopefully you now have a better idea on how some of the moving parts work in Akka Serverless and how you can build event driven APIs and services, including those that can be integrated with Kafka. We also leverage much of the new service composability features in Akka Serverless, to make a rather sophisticated application without a whole lot of setup.
+
+And don't forget: get your free Akka Serverless account [here](https://akkaserverless.com).
