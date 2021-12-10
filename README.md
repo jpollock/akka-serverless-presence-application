@@ -1,4 +1,4 @@
-Thankfully, Turkey Day this year was a success, with time well spent with family and lots of drink and delicious food, although I was not able to convince my sister, responsible for food prep this year, to use my Thanksgiving Turkey of a post (hey!) in her cooking process. On this year's Thanksgiving Day, knowing that I had a day full of eating and drinking ahead of me, I took part in an annual tradition of mine: the Peloton Turkey Burn.
+Thankfully, Turkey Day this year was a success, with time well spent with family and lots of drink and delicious food, although I was not able to convince my sister, responsible for food prep this year, to use my Thanksgiving Turkey of a post (hey!) in her cooking process. On this year's Thanksgiving Day, knowing that I had a day full of eating and drinking ahead of me, I took part in an annual tradition of mine: the Peloton Turkey Burn. A great way to burn calories but also to reflect on what it means to be real-time, within the context of a virtual social event with 10s of 1000s of users joining, sharing data and other wise participating in a shared experience. What technology enables this? How should it all work to yield the best experience? And when can I start eating? All questions that flowed through my mind during this year's event.
 
 ---
 **NOTE**
@@ -36,10 +36,12 @@ For our solution, from the above, we'll create three separate services, using Ak
 
 To build this application that provides optimal performance and flexible scalability, I do so, with the following diagram leading the way:
 
-![Image](file:///Users/jeremypollock/Documents/presence_arch.png)
+![Image](./presence_arch_with_lang.png)
 
+This is going to give us the flexibility of scaling each component as needed and promote easier feature changes. I choose multiple languages (Java, Scala, Python) simply to show off the polyglot nature of Akka Serverless, which can help different teams build different pieces of the solution, in the language of their choice.
 
 ## Let's start!
+
 First, let's clone the repository, assuming that you want to look at the full files and even play with the service itself. Run the following in a directory of your choosing.
 	
 	git clone git@github.com:jpollock/akka-serverless-presence-application.git
@@ -498,4 +500,20 @@ Before you start, make sure Docker is running!
 3. Initiate the virtual environment: `source akkasls_env/bin/activate`;
 4. Install the needed Python libraries: `pip install -r requirements.txt`;
 5. In the same terminal window (or another with the virtual environment activated), start the Python service: `PORT=8082 USER_FUNCTION_PORT=$PORT start.sh`.
-6. In another terminal window, in the same directory, with the virtual environment sourced, run a sample 
+6. In another terminal window, in the same directory, with the virtual environment sourced, simulate an event using `kafka_message_generator.py`.
+
+## Deploying and Testing in Akka Serverless
+
+We have three separate services as part of our application. This makes testing all locally a bit challenging, since your computer might not have all of the resources to run everything (`start_all.sh` in the root of the project is there if you want though). So rather than do that, let's just deploy to Akka Serverless.
+
+1. [Install the Akka Serverless CLI](https://developer.lightbend.com/docs/akka-serverless/akkasls/install-akkasls.html);
+2. Once installed, you can sign-up for a new account via `akkasls auth signup` (or visit the [Console Sign-up page](https://console.akkaserverless.lightbend.com/p/register);
+3. Login to your account via the CLI: `akkasls auth login`;
+4. In a terminal window, in the root directory of the project, set environmental variables:
+    export DOCKER_REGISTRY=<your docker registry, e.g. docker.io
+    export DOCKER_USER=<your docker registry username>
+    export DOCKER_PASS=<your docker registry password>
+5. Configure your Kakfa broker per the [documentation](https://developer.lightbend.com/docs/akka-serverless/projects/message-brokers.html#_confluent_cloud. **Do not pick the Python client, since the actual Kafka integration is running in the Akka Serverless proxy.**
+6. Per the same documentation, create the `users` and `heartbeats` topics in Confluent Cloud.
+7. In the same terminal window, run the command `deploy.sh`.
+8. In the same terminal window, run the command `akkasls services proxy presence-heartbeats-java --grpcui`. You can use this to explore the API running in the cloud without [exposing](https://developer.lightbend.com/docs/akka-serverless/akkasls/akkasls_services_expose.html) over the internet (although the above deploy script does that as well).
