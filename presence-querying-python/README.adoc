@@ -1,0 +1,1 @@
+Please visit https://jpollock.github.io/akkaserverless-python-sdk/python/getting-started.html for documentation for this Getting Started project.

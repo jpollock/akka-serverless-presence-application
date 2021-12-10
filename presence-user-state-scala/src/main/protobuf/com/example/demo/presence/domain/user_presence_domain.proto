@@ -1,0 +1,30 @@
+syntax = "proto3";
+
+package com.example.demo.presence.domain;
+
+import "akkaserverless/annotations.proto";
+
+option (akkaserverless.file).value_entity = {
+    name: "UserPresence"
+    entity_type: "user_presence"
+    state: "UserPresenceState"
+};
+
+message UserPresenceState {
+    string user_id = 1;
+    string device_id = 2;
+    bool is_online = 3;
+    Profile profile = 4;
+}
+
+message Heartbeat {
+    string user_id = 1 [(akkaserverless.field).entity_key = true];
+    string device_id = 2 [(akkaserverless.field).entity_key = true];
+    bool is_online = 3;
+    Profile profile = 4;
+}
+
+message Profile {
+    string attr1  = 1;
+    string attr2 = 2;
+}

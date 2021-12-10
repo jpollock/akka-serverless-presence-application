@@ -1,0 +1,26 @@
+syntax = "proto3";
+
+package com.example.demo.presence.domain;
+
+import "akkaserverless/annotations.proto";
+
+option (akkaserverless.file).replicated_entity = {
+    name: "UserPresenceHeartbeat"
+    entity_type: "user_presence_heartbeat"
+    replicated_register: { 
+        value: "Heartbeat" 
+    }
+};
+
+message Heartbeat {
+    string user_id = 1;
+    string device_id = 2;
+    bool is_online = 3;
+    Profile profile = 4;
+    bool is_modified = 5;
+}
+
+message Profile {
+    string attr1  = 1;
+    string attr2 = 2;
+}

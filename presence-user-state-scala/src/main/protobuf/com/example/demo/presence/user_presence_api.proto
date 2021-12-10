@@ -1,0 +1,51 @@
+// This is the public API offered by your entity.
+syntax = "proto3";
+
+import "google/protobuf/empty.proto";
+import "akkaserverless/annotations.proto";
+import "google/api/annotations.proto";
+
+import "com/example/demo/presence/domain/user_presence_domain.proto";
+
+package com.example.demo.presence;
+
+
+message GetUserPresenceCommand {
+    string user_id = 1 [(akkaserverless.field).entity_key = true];
+    string device_id = 2 [(akkaserverless.field).entity_key = true];
+
+}
+
+service PresenceStateService {
+    option (akkaserverless.service) = {
+        type : SERVICE_TYPE_ENTITY
+        component : "com.example.demo.presence.domain.UserPresence"
+    };
+
+    rpc TogglePresence(domain.Heartbeat) returns (domain.UserPresenceState) {}
+
+    rpc GetCurrentUserPresence(GetUserPresenceCommand) returns (domain.UserPresenceState) {
+        option (google.api.http) = {
+            get: "/users/{user_id}/devices/{device_id}"
+        };      
+    }
+
+}
+
+
+service PresenceHeartbeatEventService {
+    option (akkaserverless.service) = {
+        type : SERVICE_TYPE_ACTION
+    };
+
+
+    rpc HeartbeatEvent(domain.Heartbeat) returns (domain.UserPresenceState) {
+        option (akkaserverless.method).eventing.in = {
+            topic: "heartbeats"
+        }; 
+        option (akkaserverless.method).eventing.out = {
+            topic: "users"
+        }; 
+
+    }
+}

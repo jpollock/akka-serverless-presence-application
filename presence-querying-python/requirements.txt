@@ -1,0 +1,15 @@
+akkaserverless>=0.1.7
+google-api==0.1.12
+googleapis-common-protos==1.53.0
+grpcio==1.39.0
+grpcio-reflection==1.39.0
+grpcio-tools==1.39.0
+protobuf==3.17.3
+pytest>=6.2.4
+requests==2.26.0
+attrs>=19.3.0
+docker-pycreds
+docker
+pyjavaproperties>=0.7
+kafka-python==2.0.2
+argparse>=1.4.0

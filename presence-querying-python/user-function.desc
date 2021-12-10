@@ -1,0 +1,22 @@
+
+º
+api_spec.proto com.example.demo.presence.domaingoogle/protobuf/empty.proto akkaserverless/annotations.protogoogle/api/annotations.proto"¹
+UserPresenceState
+user_id (	BÂCRuserId"
+	device_id (	BÂCRdeviceId
+	is_online (RisOnlineC
+profile (2).com.example.demo.presence.domain.ProfileRprofile"5
+Profile
+attr1 (	Rattr1
+attr2 (	Rattr2"^
+UsersResponseM
+results (23.com.example.demo.presence.domain.UserPresenceStateRresults2Í
+PresenceQueryApi«
+
+UpdateView3.com.example.demo.presence.domain.UserPresenceState3.com.example.demo.presence.domain.UserPresenceState"3ÂC"
+ 
+
+python-consumer-groupusersÂC	
+
+usersŠ
+GetUsers.google.protobuf.Empty/.com.example.demo.presence.domain.UsersResponse"5ÂC$" SELECT * AS results FROM users‚Óä“/usersbproto3

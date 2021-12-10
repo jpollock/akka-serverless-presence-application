@@ -1,0 +1,48 @@
+// This is the public API offered by your entity.
+syntax = "proto3";
+
+import "google/protobuf/empty.proto";
+import "akkaserverless/annotations.proto";
+import "google/api/annotations.proto";
+
+package com.example.demo.presence.domain;
+
+message UserPresenceState {
+  string user_id = 1 [(akkaserverless.field).entity_key = true];
+  string device_id = 2 [(akkaserverless.field).entity_key = true];
+  bool is_online = 3;
+  Profile profile = 4;
+}
+
+message Profile {
+  string attr1  = 1;
+  string attr2 = 2;
+}
+
+message UsersResponse {
+    repeated domain.UserPresenceState results = 1; 
+}
+
+service PresenceQueryApi {
+    rpc UpdateView(UserPresenceState) returns (UserPresenceState) {
+        option (akkaserverless.method).eventing = {
+          
+          in: {
+            consumer_group: "python-consumer-group"
+            topic: "users"
+          }
+        };
+        option (akkaserverless.method).view.update = {
+          table: "users"
+        };
+    }
+
+    rpc GetUsers(google.protobuf.Empty) returns (UsersResponse) {
+        option (akkaserverless.method).view.query = {
+          query: "SELECT * AS results FROM users"
+        };
+        option (google.api.http) = {
+            get: "/users"
+        };  
+    }  
+}
